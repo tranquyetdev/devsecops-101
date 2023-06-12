@@ -42,6 +42,12 @@ jobs:
       - name: Tests - ${{ matrix.action }}
         run: npx nx affected -t ${{ matrix.action }} --parallel=3 --configuration=ci
   # deploy:
-  #   name: Deploy to Non-Prod
-  #   needs: setup
+  #   name: Deploy to Preview
+  #   needs: ci_tests
   #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
+  #       with:
+  #         ref: ${{ github.event.pull_request.head.sha }}
+  #         fetch-depth: 0
