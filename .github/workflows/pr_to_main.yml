@@ -44,7 +44,6 @@ jobs:
 
       - name: Tests - ${{ matrix.action }}
         run: |
-          npm install --global nx@latest
           npx nx affected -t ${{ matrix.action }} --parallel=3 --configuration=ci
   # deploy:
   #   name: Deploy to Preview
