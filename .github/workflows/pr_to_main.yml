@@ -29,7 +29,7 @@ jobs:
       - name: Get NX Affected projects
         id: nx-affected
         run: |
-          nx_affected=$(npx nx show projects --with-target test --affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --json)
+          nx_affected=$(npx nx show projects --with-target test --affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }})
           echo "nx_affected=$nx_affected" >> $GITHUB_OUTPUT
       - run: echo "nx_affected=${{ steps.nx-affected.outputs.nx_affected }}"
   ci_tests:
