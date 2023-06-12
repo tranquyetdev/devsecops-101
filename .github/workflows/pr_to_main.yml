@@ -29,7 +29,6 @@ jobs:
       fail-fast: false
       matrix:
         action: ['lint', 'format:check', 'test']
-        agent: [1, 2]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
