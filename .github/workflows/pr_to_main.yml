@@ -23,13 +23,13 @@ jobs:
       - name: Install Dependencies
         uses: ./.github/actions/install_deps
 
-      # Find affected packages and set the output for other jobs to use
+      # Print out affected projects and set the output for other jobs to use
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
         uses: nrwl/nx-set-shas@v3
-      - name: Get NX Affected Packages
+      - name: Get NX Affected projects
         id: nx-affected
         run: |
-          nx_affected=$(nx show projects --with-target build --affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }})
+          nx_affected=$(npx nx show projects --with-target test --affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --json)
           echo "nx_affected=$nx_affected" >> $GITHUB_OUTPUT
       - run: echo "nx_affected=${{ steps.nx-affected.outputs.nx_affected }}"
   ci_tests:
@@ -56,13 +56,9 @@ jobs:
       - name: Tests - ${{ matrix.action }}
         run: |
           npx nx affected -t ${{ matrix.action }} --parallel=3 --configuration=ci
-  # deploy:
-  #   name: Deploy to Preview
-  #   needs: ci_tests
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
-  #       with:
-  #         ref: ${{ github.event.pull_request.head.sha }}
-  #         fetch-depth: 0
+
+      - name: Upload coverage reports to Codecov
+        if: matrix.action == 'test'
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
