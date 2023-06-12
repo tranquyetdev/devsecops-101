@@ -28,7 +28,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        action: [lint, format:check, test]
+        action: ['lint', 'format:check', 'test']
         agent: [1, 2]
     steps:
       - name: Checkout
