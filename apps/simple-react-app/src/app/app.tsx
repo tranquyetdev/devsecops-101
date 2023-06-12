@@ -32,6 +32,9 @@ export function App() {
         <Route path="/about" element={<About />} />
       </Routes>
       {/* END: routes */}
+      <footer>
+        <h1>This is footer</h1>
+      </footer>
     </StyledApp>
   );
 }

@@ -1,8 +1,12 @@
 name: PR to Main
 on:
-  pull_request:
-    branches:
-      - main
+  workflow_dispatch
+  # push:
+  #   branches:
+  #     - main
+  # pull_request:
+  #   branches:
+  #     - main
 jobs:
   setup:
     name: Setup CI/CD
@@ -16,14 +20,28 @@ jobs:
           # Otherwise, uses the default branch.
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-      - uses: actions/setup-node@v3
+      - name: Install Dependencies
+        uses: ./.github/actions/install_deps
+      # - uses: nrwl/nx-set-shas@v3
+      # - run: npx nx format:check
+      # - run: npx nx affected -t lint --parallel=3
+      # - run: npx nx affected -t test --parallel=3 --configuration=ci
+      # - run: npx nx affected -t build --parallel=3
+  ci_tests:
+    name: CI Tests
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
         with:
-          node-version: 16.20.0
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Install Dependencies
+        uses: ./.github/actions/install_deps
       - uses: nrwl/nx-set-shas@v3
-
-      - run: yarn install --frozen-lockfile
-
-      - run: npx nx format:check
-      - run: npx nx affected -t lint --parallel=3
-      - run: npx nx affected -t test --parallel=3 --configuration=ci
-      - run: npx nx affected -t build --parallel=3
+      - name: Run CI Tests
+        run: npx nx affected -t lint format:check test --parallel=3 --configuration=ci
+  # deploy:
+  #   name: Deploy to Non-Prod
+  #   needs: setup
+  #   runs-on: ubuntu-latest
