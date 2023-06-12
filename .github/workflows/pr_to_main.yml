@@ -1,12 +1,12 @@
 name: PR to Main
 on:
-  # workflow_dispatch
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  workflow_dispatch
+  # push:
+  #   branches:
+  #     - main
+  # pull_request:
+  #   branches:
+  #     - main
 jobs:
   setup:
     name: Setup CI/CD
@@ -41,7 +41,7 @@ jobs:
       - uses: nrwl/nx-set-shas@v3
       - name: Run CI Tests
         run: npx nx affected -t lint format:check test --parallel=3 --configuration=ci
-  deploy:
-    name: Deploy to Non-Prod
-    needs: setup
-    runs-on: ubuntu-latest
+  # deploy:
+  #   name: Deploy to Non-Prod
+  #   needs: setup
+  #   runs-on: ubuntu-latest
