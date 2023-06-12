@@ -1,12 +1,12 @@
 name: PR to Main
 on:
-  workflow_dispatch
-  # push:
-  #   branches:
-  #     - main
-  # pull_request:
-  #   branches:
-  #     - main
+  # workflow_dispatch
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 jobs:
   setup:
     name: Setup CI/CD
