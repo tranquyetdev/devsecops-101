@@ -35,9 +35,11 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        uses: nrwl/nx-set-shas@v3
       - name: Install Dependencies
         uses: ./.github/actions/install_deps
-      - uses: nrwl/nx-set-shas@v3
       - name: Run CI Tests
         run: npx nx affected -t lint format:check test --parallel=3 --configuration=ci
   # deploy:
