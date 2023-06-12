@@ -21,15 +21,15 @@ jobs:
           fetch-depth: 0
       - name: Install Dependencies
         uses: ./.github/actions/install_deps
-      # - uses: nrwl/nx-set-shas@v3
-      # - run: npx nx format:check
-      # - run: npx nx affected -t lint --parallel=3
-      # - run: npx nx affected -t test --parallel=3 --configuration=ci
-      # - run: npx nx affected -t build --parallel=3
   ci_tests:
     name: CI Tests
     needs: setup
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        action: [lint, format:check, test]
+        agent: [1, 2]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -40,8 +40,8 @@ jobs:
         uses: nrwl/nx-set-shas@v3
       - name: Install Dependencies
         uses: ./.github/actions/install_deps
-      - name: Run CI Tests
-        run: npx nx affected -t lint format:check test --parallel=3 --configuration=ci
+      - name: Tests - ${{ matrix.action }}
+        run: npx nx affected -t ${{ matrix.action }} --parallel=3 --configuration=ci
   # deploy:
   #   name: Deploy to Non-Prod
   #   needs: setup
