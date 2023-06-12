@@ -7,3 +7,8 @@ runs:
     - uses: actions/setup-node@v3
       with:
         node-version: 16.20.0
+    - name: Install project dependencies if needed.
+      # if: steps.cache-node-modules.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        yarn install --ignore-platform --frozen-lockfile
