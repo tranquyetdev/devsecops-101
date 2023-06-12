@@ -7,6 +7,8 @@ This repository consist of my hands on examples to learn and practice the AWS se
 - Use AWS Management Console to complete each lab
 - Then write Terraform code to provision the infrastructure
 - Then `terraform destroy` to clean up
+- Github Actions as the CI/CD tool
+- Nx monorepo
 
 # Terraform Code Structure
 
