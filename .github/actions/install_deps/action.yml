@@ -7,37 +7,15 @@ runs:
     - uses: actions/setup-node@v3
       with:
         node-version: 16.20.0
-        # cache: 'yarn'
 
-    # - name: Get yarn cache directory path
-    #   id: yarn-cache-dir-path
-    #   shell: bash
-    #   run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
-
-    # - uses: actions/cache@v3
-    #   id: yarn-cache
-    #   with:
-    #     path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-    #     key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-    #     restore-keys: |
-    #       ${{ runner.os }}-yarn-
-
+    # https://github.com/actions/cache/blob/main/examples.md#node---yarn
+    # https://dev.to/mattpocockuk/how-to-cache-nodemodules-in-github-actions-with-yarn-24eh
     - name: Cache node modules
       id: cache-node-modules
       uses: actions/cache@v3
       with:
         path: '**/node_modules'
         key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
-
-    # - name: Cache node modules
-    #   id: cache-node-modules
-    #   uses: actions/cache@v3
-    #   env:
-    #     cache-name: cache-node-modules
-    #   with:
-    #     path: |
-    #       node_modules
-    #     key: ${{ steps.cache-key.outputs.cacheKey }}
 
     - name: Install project dependencies if needed.
       if: steps.cache-node-modules.outputs.cache-hit != 'true'

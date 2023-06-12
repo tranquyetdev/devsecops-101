@@ -11,16 +11,27 @@ jobs:
     name: Setup CI/CD
     runs-on: ubuntu-latest
     steps:
+      # https://github.com/actions/checkout#checkout-pull-request-head-commit-instead-of-merge-commit
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          # The branch, tag or SHA to checkout. When checking out the repository that
-          # triggered a workflow, this defaults to the reference or SHA for that event.
-          # Otherwise, uses the default branch.
           ref: ${{ github.event.pull_request.head.sha }}
+          # We need to fetch all branches and commits so that Nx affected has a base to compare against.
           fetch-depth: 0
+
+      # Install project dependencies
       - name: Install Dependencies
         uses: ./.github/actions/install_deps
+
+      # Find affected packages and set the output for other jobs to use
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        uses: nrwl/nx-set-shas@v3
+      - name: Get NX Affected Packages
+        id: nx-affected
+        run: |
+          nx_affected=$(nx show projects --with-target build --affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }})
+          echo "nx_affected=$nx_affected" >> $GITHUB_OUTPUT
+      - run: echo "nx_affected=${{ steps.nx-affected.outputs.nx_affected }}"
   ci_tests:
     name: CI Tests
     needs: setup
