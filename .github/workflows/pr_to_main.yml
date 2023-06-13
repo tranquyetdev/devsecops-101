@@ -62,10 +62,9 @@ jobs:
       - name: Upload coverage reports to Codecov
         if: matrix.action == 'test'
         uses: codecov/codecov-action@v3
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
-          directory: coverage/apps/
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: ./coverage/apps/
   after:
     name: After CI/CD
     runs-on: ubuntu-latest
