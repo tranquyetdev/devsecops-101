@@ -24,15 +24,17 @@ jobs:
         uses: ./.github/actions/install_deps
 
       # Print out affected projects and set the output for other jobs to use
-      - name: Derive appropriate SHAs for base and head for `nx affected` commands
-        uses: nrwl/nx-set-shas@v3
-      - name: Get NX Affected projects
-        id: nx-affected
-        run: |
-          nx_affected=$(npx nx show projects --with-target test --affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }})
-          echo "nx_affected=$nx_affected" >> $GITHUB_OUTPUT
-      - run: echo "nx_affected=${{ steps.nx-affected.outputs.nx_affected }}"
-  ci_tests:
+      # - name: Derive appropriate SHAs for base and head for `nx affected` commands
+      #   uses: nrwl/nx-set-shas@v3
+      # - name: Get NX Affected projects
+      #   id: nx-affected
+      #   run: |
+      #     nx_affected=$(npx nx show projects --with-target test --affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }})
+      #     echo "nx_affected=$nx_affected" >> $GITHUB_OUTPUT
+      # - run: echo "nx_affected=${{ steps.nx-affected.outputs.nx_affected }}"
+
+  # CI Tests
+  tests:
     name: CI Tests
     needs: setup
     runs-on: ubuntu-latest
@@ -97,9 +99,11 @@ jobs:
       #     files: coverage/apps/simple-react-app/cobertura-coverage.xml
       #     name: codecov-umbrella
       #     verbose: true
-  codecoverage:
-    name: Code Coverage
-    needs: ci_tests
+
+  # Report - code coverage
+  coverage:
+    name: Report - Code Coverage
+    needs: tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v3
@@ -109,20 +113,28 @@ jobs:
       - name: Display structure of downloaded files
         run: ls -R
         working-directory: ./all-coverage
+
+  # Placeholder for additonal security tests
+  security:
+    name: Report - Security
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test - Security
+        run: echo "Test - Security"
   after:
     name: After CI/CD
     runs-on: ubuntu-latest
     if: ${{ always() }}
     needs:
       - setup
-      - ci_tests
+      - tests
     steps:
       - name: Check pipeline status
         run: |
           echo "setup = ${{ needs.setup.result }}"
-          echo "test_agents = ${{ needs.ci_tests.result }}"
+          echo "tests = ${{ needs.tests.result }}"
           if [ "${{ needs.setup.result }}" == "success" ] && \
-              [ "${{ needs.ci_tests.result }}" == "success" ]
+              [ "${{ needs.tests.result }}" == "success" ]
           then
             echo "Pipeline passed! hooray!!"
           else
