@@ -64,7 +64,10 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./coverage/apps/simple-react-app/coverage-final.json
+          files: ./coverage-final.json
+          directory: ./coverage/apps/simple-react-app
+          name: codecov-umbrella
+          verbose: true
   after:
     name: After CI/CD
     runs-on: ubuntu-latest

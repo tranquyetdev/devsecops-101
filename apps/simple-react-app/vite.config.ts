@@ -34,6 +34,9 @@ export default defineConfig({
 
   test: {
     globals: true,
+    coverage: {
+      reporter: ['text', 'json', 'html'],
+    },
     cache: {
       dir: '../../node_modules/.vitest',
     },
