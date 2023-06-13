@@ -58,27 +58,33 @@ jobs:
           else
             npx nx affected -t ${{ matrix.action }} --parallel=3 --ci
           fi
-
-      - name: Code Coverage Report
-        if: matrix.action == 'test'
-        uses: irongut/CodeCoverageSummary@v1.3.0
+      - name: 'Upload code coverage artifact'
+        uses: actions/upload-artifact@v3
         with:
-          filename: coverage/**/cobertura-coverage.xml
-          badge: true
-          fail_below_min: true
-          format: markdown
-          hide_branch_rate: false
-          hide_complexity: false
-          indicators: true
-          output: both
-          thresholds: '60 80'
+          # name: my-artifact
+          path: ./coverage
+          retention-days: 1
 
-      - name: Add Coverage PR Comment
-        uses: marocchino/sticky-pull-request-comment@v2
-        if: matrix.action == 'test'
-        with:
-          recreate: true
-          path: code-coverage-results.md
+      # - name: Code Coverage Report
+      #   if: matrix.action == 'test'
+      #   uses: irongut/CodeCoverageSummary@v1.3.0
+      #   with:
+      #     filename: coverage/**/cobertura-coverage.xml
+      #     badge: true
+      #     fail_below_min: true
+      #     format: markdown
+      #     hide_branch_rate: false
+      #     hide_complexity: false
+      #     indicators: true
+      #     output: both
+      #     thresholds: '60 80'
+
+      # - name: Add Coverage PR Comment
+      #   uses: marocchino/sticky-pull-request-comment@v2
+      #   if: matrix.action == 'test'
+      #   with:
+      #     recreate: true
+      #     path: code-coverage-results.md
 
       # - name: Upload coverage reports to Codecov
       #   if: matrix.action == 'test'
@@ -88,6 +94,19 @@ jobs:
       #     files: coverage/apps/simple-react-app/cobertura-coverage.xml
       #     name: codecov-umbrella
       #     verbose: true
+  codecoverage:
+    name: Check Code Coverage
+    needs: ci_tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          path: ./all-coverage
+
+      - name: Display structure of downloaded files
+        run: ls -R
+        working-directory: ./all-coverage
+
   after:
     name: After CI/CD
     runs-on: ubuntu-latest
