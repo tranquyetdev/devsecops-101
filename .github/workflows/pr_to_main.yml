@@ -8,6 +8,9 @@ jobs:
     name: Setup CI/CD
     runs-on: ubuntu-latest
     steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.11.0
+
       # https://github.com/actions/checkout#checkout-pull-request-head-commit-instead-of-merge-commit
       - name: Checkout
         uses: actions/checkout@v3
