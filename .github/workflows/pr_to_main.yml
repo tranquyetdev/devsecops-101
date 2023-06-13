@@ -52,7 +52,7 @@ jobs:
 
       - name: Tests - ${{ matrix.action }}
         run: |
-          if [ ${{ matrix.action }} -eq 'test' ]
+          if [ '${{ matrix.action }}' -eq 'test' ]
           then
             npx nx affected -t ${{ matrix.action }} --parallel=3 --ci --coverage
           else
