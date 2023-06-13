@@ -52,13 +52,20 @@ jobs:
 
       - name: Tests - ${{ matrix.action }}
         run: |
-          npx nx affected -t ${{ matrix.action }} --parallel=3 --configuration=ci
+          if [ ${{ matrix.action }} -eq 'test' ]
+          then
+            npx nx affected -t ${{ matrix.action }} --parallel=3 --ci --coverage
+          else
+            npx nx affected -t ${{ matrix.action }} --parallel=3 --ci
+          fi
 
       - name: Upload coverage reports to Codecov
         if: matrix.action == 'test'
         uses: codecov/codecov-action@v3
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        with:
+          directory: coverage/apps/
   after:
     name: After CI/CD
     runs-on: ubuntu-latest
