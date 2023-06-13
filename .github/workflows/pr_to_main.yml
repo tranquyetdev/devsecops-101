@@ -95,7 +95,7 @@ jobs:
       #     name: codecov-umbrella
       #     verbose: true
   codecoverage:
-    name: Check Code Coverage
+    name: Code Coverage
     needs: ci_tests
     runs-on: ubuntu-latest
     steps:
@@ -106,7 +106,6 @@ jobs:
       - name: Display structure of downloaded files
         run: ls -R
         working-directory: ./all-coverage
-
   after:
     name: After CI/CD
     runs-on: ubuntu-latest

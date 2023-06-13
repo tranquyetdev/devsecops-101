@@ -40,3 +40,6 @@ Thumbs.db
 
 # Terraform .gitignore files
 **/.terraform/*
+
+# Next.js
+.next
