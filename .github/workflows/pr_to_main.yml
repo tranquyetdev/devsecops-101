@@ -38,9 +38,14 @@ jobs:
         id: nx-affected
         run: |
           NX_AFFECTED_TEST=$(npx nx show projects --with-target test --affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }})
-          echo "NX_AFFECTED_TEST=$NX_AFFECTED_TEST" >> $GITHUB_OUTPUT
+          echo "NX_AFFECTED_TEST<<EOF" >> $GITHUB_OUTPUT
+          echo "$NX_AFFECTED_TEST" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
           NX_AFFECTED_BUILD=$(npx nx show projects --with-target build --affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }})
-          echo "NX_AFFECTED_BUILD=$NX_AFFECTED_BUILD" >> $GITHUB_OUTPUT
+          echo "NX_AFFECTED_BUILD<<EOF" >> $GITHUB_OUTPUT
+          echo "$NX_AFFECTED_BUILD" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Print affected projects
         run: |
