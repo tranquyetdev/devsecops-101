@@ -8,7 +8,7 @@ This repository consist of my hands on examples to learn and practice the AWS se
 - Then write Terraform code to provision the infrastructure
 - Then `terraform destroy` to clean up
 - Github Actions as the CI/CD tool
-- Nx monorepo
+- Nx monorepo.
 
 # Terraform Code Structure
 
