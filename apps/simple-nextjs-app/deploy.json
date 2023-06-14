@@ -1,0 +1,22 @@
+{
+  "appId": "simple-nextjs-app",
+  "matrix": {
+    "ecs_matrix": {
+      "type": "ecs",
+      "options": {
+        "repositoryName": "simple-nextjs-app",
+        "environments": {
+          "preview": {
+            "accountId": ""
+          },
+          "staging": {
+            "accountId": ""
+          },
+          "prod": {
+            "accountId": ""
+          }
+        }
+      }
+    }
+  }
+}
