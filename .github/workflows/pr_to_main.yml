@@ -88,10 +88,9 @@ jobs:
           fi
 
   ecsMatrix:
-    name: ECS Matrix
+    name: ECS Matrix |> ${{ matrix.name }}
     runs-on: ubuntu-latest
     needs: setup
-    if: ${{ fromJson(needs.setup.outputs.ecsMatrix) != 'null' }}
     strategy:
       matrix: ${{ fromJson(needs.setup.outputs.ecsMatrix) }}
     steps:
@@ -100,10 +99,9 @@ jobs:
         run: echo "Todo ECS matrix"
 
   cloudfrontMatrix:
-    name: Cloudfront Matrix
+    name: Cloudfront Matrix |> ${{ matrix.name }}
     runs-on: ubuntu-latest
     needs: setup
-    if: ${{ fromJson(needs.setup.outputs.cloudfrontMatrix) != 'null' }}
     strategy:
       matrix: ${{ fromJson(needs.setup.outputs.cloudfrontMatrix) }}
     steps:

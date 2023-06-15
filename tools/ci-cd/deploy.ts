@@ -13,10 +13,10 @@ export interface IDeployMatrixActionConfig {
 export interface IDeployMatrix {
   ecsMatrix: {
     include: IDeployMatrixActionConfig[];
-  } | null;
+  };
   cloudfrontMatrix: {
     include: IDeployMatrixActionConfig[];
-  } | null;
+  };
 }
 
 export const getDeployConfig = (projectId: string): IDeployConfig => {

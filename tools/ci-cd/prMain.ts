@@ -37,24 +37,22 @@ export const setOutput = (name: string, value: any) => {
 (function setMatrix() {
   console.log('setMatrix...');
 
-  const allMatrix: IDeployMatrix = {
-    ecsMatrix: null,
-    cloudfrontMatrix: null,
-  };
-
   const affectedBuildProjects = getAffectedBuild();
-
   console.log(`affectedBuildProjects`, affectedBuildProjects);
+
+  const allMatrix: IDeployMatrix = {
+    ecsMatrix: {
+      include: [],
+    },
+    cloudfrontMatrix: {
+      include: [],
+    },
+  };
 
   affectedBuildProjects.forEach((project) => {
     const { matrix, projectId } = getDeployConfig(project);
 
     if (matrix.ecsMatrix) {
-      if (!allMatrix.ecsMatrix) {
-        allMatrix.ecsMatrix = {
-          include: [],
-        };
-      }
       allMatrix.ecsMatrix.include.push({
         run: true,
         name: projectId,
@@ -62,17 +60,21 @@ export const setOutput = (name: string, value: any) => {
     }
 
     if (matrix.cloudfrontMatrix) {
-      if (!allMatrix.cloudfrontMatrix) {
-        allMatrix.cloudfrontMatrix = {
-          include: [],
-        };
-      }
       allMatrix.cloudfrontMatrix.include.push({
         run: true,
         name: projectId,
       });
     }
   });
+
+  const skipped = { run: false, name: 'SKIP' };
+  if (allMatrix.ecsMatrix.include.length === 0) {
+    allMatrix.ecsMatrix.include.push(skipped);
+  }
+
+  if (allMatrix.cloudfrontMatrix.include.length === 0) {
+    allMatrix.cloudfrontMatrix.include.push(skipped);
+  }
 
   console.log(`ecsMatrix`, allMatrix.ecsMatrix);
   console.log(`cloudfrontMatrix`, allMatrix.cloudfrontMatrix);
