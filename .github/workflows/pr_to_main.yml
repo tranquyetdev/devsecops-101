@@ -37,11 +37,6 @@ jobs:
       - name: Set NX Affected projects
         id: nx-affected
         run: |
-          NX_AFFECTED_TEST=$(npx nx show projects --with-target test --affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }})
-          echo "NX_AFFECTED_TEST<<EOF" >> $GITHUB_OUTPUT
-          echo "$NX_AFFECTED_TEST" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-
           NX_AFFECTED_BUILD=$(npx nx show projects --with-target build --affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }})
           echo "NX_AFFECTED_BUILD<<EOF" >> $GITHUB_OUTPUT
           echo "$NX_AFFECTED_BUILD" >> $GITHUB_OUTPUT
@@ -53,22 +48,19 @@ jobs:
         env:
           CURRENT_BRANCH: ${{ steps.branch-name.outputs.current_branch }}
           GITHUB_PR_NUM: ${{ github.event.number }}
-          NX_AFFECTED_TEST: ${{ steps.nx-affected.outputs.NX_AFFECTED_TEST }}
           NX_AFFECTED_BUILD: ${{ steps.nx-affected.outputs.NX_AFFECTED_BUILD }}
         shell: bash
 
   # CI Tests
   tests:
-    name: CI Tests |> ${{ matrix.action }}
+    name: Tests |> ${{ matrix.action }}
     needs: setup
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        action: ['lint', 'format:check', 'test']
+        action: ['lint', 'format:check', 'test', 'e2e']
     steps:
-      - name: Todo
-        run: echo "Todo"
       - name: Checkout
         uses: actions/checkout@v3
         with:
@@ -87,7 +79,7 @@ jobs:
           then
             npx nx affected -t ${{ matrix.action }} --parallel=3 --ci --coverage
           else
-            npx nx affected -t ${{ matrix.action }} --parallel=3 --ci
+            npx nx affected -t ${{ matrix.action }} --parallel=3
           fi
   # - name: 'Upload code coverage artifact'
   #   uses: actions/upload-artifact@v3
@@ -179,12 +171,18 @@ jobs:
     needs:
       - setup
       - tests
+      - ecsMatrix
+      - cloudfrontMatrix
     steps:
       - name: Check pipeline status
         run: |
           echo "setup = ${{ needs.setup.result }}"
           echo "tests = ${{ needs.tests.result }}"
+          echo "ecsMatrix = ${{ needs.ecsMatrix.result }}"
+          echo "cloudfrontMatrix = ${{ needs.cloudfrontMatrix.result }}"
           if [ "${{ needs.setup.result }}" == "success" ] && \
+              [ "${{ needs.ecsMatrix.result }}" == "success" ] && \
+              [ "${{ needs.cloudfrontMatrix.result }}" == "success" ] && \
               [ "${{ needs.tests.result }}" == "success" ]
           then
             echo "Pipeline passed! hooray!!"
