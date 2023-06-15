@@ -24,7 +24,8 @@
       "executor": "@nx/vite:dev-server",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "simple-react-app:build"
+        "buildTarget": "simple-react-app:build",
+        "port": 4100
       },
       "configurations": {
         "development": {
@@ -58,6 +59,12 @@
       "options": {
         "passWithNoTests": true,
         "reportsDirectory": "../../coverage/apps/simple-react-app"
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "coverage": true
+        }
       }
     },
     "lint": {

@@ -1,0 +1,18 @@
+{
+  "projectId": "simple-react-app",
+  "matrix": {
+    "cloudfrontMatrix": {
+      "environments": {
+        "preview": {
+          "accountId": "1111"
+        },
+        "staging": {
+          "accountId": "1111"
+        },
+        "prod": {
+          "accountId": "2222"
+        }
+      }
+    }
+  }
+}
