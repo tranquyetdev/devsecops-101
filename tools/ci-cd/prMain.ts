@@ -71,6 +71,6 @@ export const setOutput = (name: string, value: any) => {
   console.log(`ecsMatrix`, allMatrix.ecsMatrix);
   console.log(`cloudfrontMatrix`, allMatrix.cloudfrontMatrix);
 
-  setOutput('ecsMatrix', allMatrix.ecsMatrix);
-  setOutput('cloudfrontMatrix', allMatrix.cloudfrontMatrix);
+  setOutput('ecsMatrix', JSON.stringify(allMatrix.ecsMatrix));
+  setOutput('cloudfrontMatrix', JSON.stringify(allMatrix.cloudfrontMatrix));
 })();
