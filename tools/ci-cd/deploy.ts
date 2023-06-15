@@ -3,8 +3,6 @@ export interface IDeployConfig {
   matrix: Record<string, any>;
 }
 
-export type DeployMatrixAction = 'test' | 'build';
-
 export interface IDeployMatrixActionConfig {
   run: boolean;
   name: string;

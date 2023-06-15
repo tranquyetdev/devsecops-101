@@ -64,7 +64,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: ['lint', 'format:check', 'test']
+        target: ['lint', 'format:check', 'test', 'e2e']
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -88,9 +88,11 @@ jobs:
           fi
 
   ecsMatrix:
-    name: ECS Matrix
+    name: ECS Matrix |> ${{ matrix.name }}
     runs-on: ubuntu-latest
-    needs: setup
+    needs:
+      - setup
+      - tests
     strategy:
       matrix: ${{ fromJson(needs.setup.outputs.ecsMatrix) }}
     steps:
@@ -99,9 +101,11 @@ jobs:
         run: echo "Todo ECS matrix"
 
   cloudfrontMatrix:
-    name: Cloudfront Matrix
+    name: Cloudfront Matrix |> ${{ matrix.name }}
     runs-on: ubuntu-latest
-    needs: setup
+    needs:
+      - setup
+      - tests
     strategy:
       matrix: ${{ fromJson(needs.setup.outputs.cloudfrontMatrix) }}
     steps:
