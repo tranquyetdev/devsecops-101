@@ -91,6 +91,7 @@ jobs:
     name: ECS Matrix
     runs-on: ubuntu-latest
     needs: setup
+    if: ${{ fromJson(needs.setup.outputs.ecsMatrix) != 'null' }}
     strategy:
       matrix: ${{ fromJson(needs.setup.outputs.ecsMatrix) }}
     steps:
@@ -102,6 +103,7 @@ jobs:
     name: Cloudfront Matrix
     runs-on: ubuntu-latest
     needs: setup
+    if: ${{ fromJson(needs.setup.outputs.cloudfrontMatrix) != 'null' }}
     strategy:
       matrix: ${{ fromJson(needs.setup.outputs.cloudfrontMatrix) }}
     steps:
