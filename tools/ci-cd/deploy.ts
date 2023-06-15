@@ -1,9 +1,25 @@
 export interface IDeployConfig {
-  appId: string;
+  projectId: string;
   matrix: Record<string, any>;
 }
 
-export const getDeployConfig = (appId: string): IDeployConfig => {
-  const deployConfig = require(`../../apps/${appId}/deploy.json`);
+export type DeployMatrixAction = 'test' | 'build';
+
+export interface IDeployMatrixActionConfig {
+  run: boolean;
+  name: string;
+}
+
+export interface IDeployMatrix {
+  ecsMatrix: {
+    include: IDeployMatrixActionConfig[];
+  };
+  cloudfrontMatrix: {
+    include: IDeployMatrixActionConfig[];
+  };
+}
+
+export const getDeployConfig = (projectId: string): IDeployConfig => {
+  const deployConfig = require(`../../apps/${projectId}/deploy.json`);
   return deployConfig;
 };

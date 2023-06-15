@@ -1,6 +1,7 @@
 import * as core from '@actions/core';
 import isCI from 'is-ci';
-import { getAffectedBuild, getAffectedTest } from './nx';
+import { getAffectedBuild } from './nx';
+import { IDeployMatrix, getDeployConfig } from './deploy';
 
 export const setOutput = (name: string, value: any) => {
   const skip = [
@@ -36,12 +37,40 @@ export const setOutput = (name: string, value: any) => {
 (function setMatrix() {
   console.log('setMatrix...');
 
-  const affectedTestPackages = getAffectedTest();
-  const affectedBuildPackages = getAffectedBuild();
+  const allMatrix: IDeployMatrix = {
+    ecsMatrix: {
+      include: [],
+    },
+    cloudfrontMatrix: {
+      include: [],
+    },
+  };
 
-  console.log(`affectedTestPackages`, affectedTestPackages);
-  console.log(`affectedBuildPackages`, affectedBuildPackages);
+  const affectedBuildProjects = getAffectedBuild();
 
-  // setOutput('all_matrix', allPackagesMatrix)
-  // setOutput('web_matrix', webMatrix)
+  console.log(`affectedBuildProjects`, affectedBuildProjects);
+
+  affectedBuildProjects.forEach((project) => {
+    const { matrix, projectId } = getDeployConfig(project);
+
+    if (matrix.ecsMatrix) {
+      allMatrix.ecsMatrix.include.push({
+        run: true,
+        name: projectId,
+      });
+    }
+
+    if (matrix.cloudfrontMatrix) {
+      allMatrix.cloudfrontMatrix.include.push({
+        run: true,
+        name: projectId,
+      });
+    }
+  });
+
+  console.log(`ecsMatrix`, allMatrix.ecsMatrix);
+  console.log(`cloudfrontMatrix`, allMatrix.cloudfrontMatrix);
+
+  setOutput('ecsMatrix', allMatrix.ecsMatrix);
+  setOutput('cloudfrontMatrix', allMatrix.cloudfrontMatrix);
 })();

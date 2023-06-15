@@ -1,7 +1,7 @@
 {
-  "projectId": "simple-nextjs-app",
+  "projectId": "simple-react-app",
   "matrix": {
-    "ecsMatrix": {
+    "cloudfrontMatrix": {
       "environments": {
         "preview": {
           "accountId": "1111"
