@@ -1,8 +1,16 @@
 name: PR to Main
+
 on:
   pull_request:
     branches:
       - main
+env:
+  BUILD_ARTIFACTS: dist-artifacts
+  CYPRESS_CACHE: cache-cypress
+  CYPRESS_CACHE_FOLDER: cache/Cypress
+  DEPENDENCIES_CACHE: cache-node-modules
+  NX_CACHE: cache-nx
+
 jobs:
   setup:
     name: Setup CI/CD
@@ -53,13 +61,13 @@ jobs:
 
   # CI Tests
   tests:
-    name: Tests |> ${{ matrix.action }}
+    name: Tests |> ${{ matrix.target }}
     needs: setup
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        action: ['lint', 'format:check', 'test', 'e2e']
+        target: ['lint', 'format:check', 'test', 'e2e']
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -73,13 +81,20 @@ jobs:
       - name: Install Dependencies
         uses: ./.github/actions/install_deps
 
-      - name: Tests - ${{ matrix.action }}
+      - name: Cache Cypress
+        uses: actions/cache@v2
+        if: matrix.target == 'e2e'
+        with:
+          path: ${{ env.CYPRESS_CACHE_FOLDER }}
+          key: ${{ env.CYPRESS_CACHE }}
+
+      - name: Tests - ${{ matrix.target }}
         run: |
-          if [ '${{ matrix.action }}' = 'test' ]
+          if [ '${{ matrix.target }}' = 'test' ]
           then
-            npx nx affected -t ${{ matrix.action }} --parallel=3 --ci --coverage
+            npx nx affected -t ${{ matrix.target }} --parallel=3 --ci --coverage
           else
-            npx nx affected -t ${{ matrix.action }} --parallel=3
+            npx nx affected -t ${{ matrix.target }} --parallel=3
           fi
   # - name: 'Upload code coverage artifact'
   #   uses: actions/upload-artifact@v3
