@@ -91,6 +91,7 @@ jobs:
     name: ECS Matrix |> ${{ matrix.name }}
     runs-on: ubuntu-latest
     needs:
+      - setup
       - tests
     strategy:
       matrix: ${{ fromJSON(needs.setup.outputs.ecsMatrix) }}
@@ -102,6 +103,7 @@ jobs:
     name: Cloudfront Matrix |> ${{ matrix.name }}
     runs-on: ubuntu-latest
     needs:
+      - setup
       - tests
     strategy:
       matrix: ${{ fromJSON(needs.setup.outputs.cloudfrontMatrix) }}
