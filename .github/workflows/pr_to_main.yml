@@ -15,6 +15,7 @@ jobs:
     outputs:
       cloudfrontMatrix: ${{ steps.set-matrix.outputs.cloudfrontMatrix }}
       ecsMatrix: ${{ steps.set-matrix.outputs.ecsMatrix }}
+      affectedProjects: ${{ steps.set-matrix.outputs.affectedProjects }}
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.11.0
@@ -86,13 +87,41 @@ jobs:
           else
             npx nx affected -t ${{ matrix.target }} --parallel=3
           fi
+  build:
+    name: Build |> ${{ matrix.project }}
+    needs:
+      - setup
+      - tests
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        project: ${{ fromJson(needs.setup.outputs.affectedProjects) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Install Dependencies
+        uses: ./.github/actions/install_deps
+
+      - name: Build - ${{ matrix.project }}
+        run: |
+          npx nx run ${{ matrix.project }}:build --parallel=3
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.project }}-build
+          path: dist/apps/${{ matrix.project }}
 
   ecsMatrix:
     name: ECS Matrix |> ${{ matrix.name }}
     runs-on: ubuntu-latest
     needs:
-      - setup
-      - tests
+      - build
     strategy:
       matrix: ${{ fromJson(needs.setup.outputs.ecsMatrix) }}
     steps:
@@ -104,14 +133,24 @@ jobs:
     name: Cloudfront Matrix |> ${{ matrix.name }}
     runs-on: ubuntu-latest
     needs:
-      - setup
-      - tests
+      - build
     strategy:
       matrix: ${{ fromJson(needs.setup.outputs.cloudfrontMatrix) }}
     steps:
-      - name: Todo
-        if: ${{ matrix.run }}
-        run: echo "Todo Cloudfront matrix"
+      - name: Download a single artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ matrix.name }}-build
+
+      - name: List files
+        run: ls -R
+
+      # - uses: lbertenasco/s3-deploy@v1
+      #   with:
+      #     folder: dist/apps/${{ matrix.name }}
+      #     bucket: ${{ secrets.S3_BUCKET }}
+      #     dist-id: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+      #     invalidation: / *
 
   after:
     name: After CI/CD

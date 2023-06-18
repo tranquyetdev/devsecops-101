@@ -1,35 +1,13 @@
 import * as core from '@actions/core';
 import isCI from 'is-ci';
-import { getAffectedBuild } from './nx';
+import { getAffectedProjects } from './nx';
 import { IDeployMatrix, getDeployConfig } from './deploy';
 
 export const setOutput = (name: string, value: any) => {
-  const skip = [
-    {
-      name: 'SKIP',
-      shortName: 'SKIP',
-      run: false,
-    },
-  ];
-
-  const matrix =
-    (Array.isArray(value) || typeof value === 'string') && value.length === 0
-      ? skip
-      : value;
-
-  const output = Array.isArray(value)
-    ? isCI
-      ? JSON.stringify({ include: matrix })
-      : JSON.stringify({ include: matrix }, null, 2)
-    : value;
-
-  // eslint-disable-next-line
-  console.log(`matrix ${name} = ${output}`);
-
+  const output = JSON.stringify(value || { run: false, name: 'SKIP' })
   if (isCI) {
     core.setOutput(`${name}`, `${output}`);
   } else {
-    // eslint-disable-next-line
     console.log(`${name}=${output}`);
   }
 };
@@ -37,8 +15,8 @@ export const setOutput = (name: string, value: any) => {
 (function setMatrix() {
   console.log('setMatrix...');
 
-  const affectedBuildProjects = getAffectedBuild();
-  console.log(`affectedBuildProjects`, affectedBuildProjects);
+  const affectedProjects = getAffectedProjects();
+  console.log(`affectedProjects`, affectedProjects);
 
   const allMatrix: IDeployMatrix = {
     ecsMatrix: {
@@ -49,7 +27,7 @@ export const setOutput = (name: string, value: any) => {
     },
   };
 
-  affectedBuildProjects.forEach((project) => {
+  affectedProjects.forEach((project) => {
     const { matrix, projectId } = getDeployConfig(project);
 
     if (matrix.ecsMatrix) {
@@ -79,6 +57,7 @@ export const setOutput = (name: string, value: any) => {
   console.log(`ecsMatrix`, allMatrix.ecsMatrix);
   console.log(`cloudfrontMatrix`, allMatrix.cloudfrontMatrix);
 
-  setOutput('ecsMatrix', JSON.stringify(allMatrix.ecsMatrix));
-  setOutput('cloudfrontMatrix', JSON.stringify(allMatrix.cloudfrontMatrix));
+  setOutput('affectedProjects', affectedProjects);
+  setOutput('ecsMatrix', allMatrix.ecsMatrix);
+  setOutput('cloudfrontMatrix', allMatrix.cloudfrontMatrix);
 })();
