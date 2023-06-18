@@ -120,7 +120,7 @@ jobs:
       - name: Build ${{ matrix.name }}
         if: ${{ matrix.run }}
         run: |
-          npx nx run ${{matrix.names}}:build:production
+          npx nx run ${{matrix.name}}:build:production
 
       - name: List files
         run: ls -R
