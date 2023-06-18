@@ -108,6 +108,15 @@ jobs:
     strategy:
       matrix: ${{ fromJSON(needs.setup.outputs.cloudfrontMatrix) }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Install Dependencies
+        uses: ./.github/actions/install_deps
+
       - name: Build ${{ matrix.name }}
         if: ${{ matrix.run }}
         run: |
