@@ -4,7 +4,7 @@ import { getAffectedProjects } from './nx';
 import { IDeployMatrix, getDeployConfig } from './deploy';
 
 export const setOutput = (name: string, value: any) => {
-  const output = JSON.stringify(value || { run: false, name: 'SKIP' })
+  const output = JSON.stringify(value || { run: false, name: 'SKIP' });
   if (isCI) {
     core.setOutput(`${name}`, `${output}`);
   } else {
