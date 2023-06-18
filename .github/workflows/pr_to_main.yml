@@ -93,7 +93,7 @@ jobs:
     needs:
       - tests
     strategy:
-      matrix: ${{ fromJson(needs.setup.outputs.ecsMatrix) }}
+      matrix: ${{ fromJSON(needs.setup.outputs.ecsMatrix) }}
     steps:
       - name: Todo
         run: echo "TODO"
@@ -104,7 +104,7 @@ jobs:
     needs:
       - tests
     strategy:
-      matrix: ${{ fromJson(needs.setup.outputs.cloudfrontMatrix) }}
+      matrix: ${{ fromJSON(needs.setup.outputs.cloudfrontMatrix) }}
     steps:
       - name: Build ${{ matrix.name }}
         if: ${{ matrix.run }}
