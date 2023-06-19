@@ -1,9 +1,10 @@
-# S3 Static Website + Cloudfront + WAF
+# SIMPLE-REACT-APP INFRA
 
 ## Requirements
 
+- [Large-size](https://github.com/antonbabenko/terraform-best-practices/tree/master/examples/large-terraform) / [Medium-size](https://github.com/antonbabenko/terraform-best-practices/tree/master/examples/medium-terraform) Infrastructure
 - Region: ap-southeast-1
-- Cloudfront
+- CloudFront
 
   - S3 origin
   - Price class: PriceClass_200 (North America, Europe, Asia, Middle East, and Africa)
@@ -23,10 +24,6 @@
   - Custom doman: Yes
   - SSL certificate: ACM
 
-- WAF: Enabled
-
-  - Common rules (TBD)
-
 - Route53
 
   - Alias record point to cloudfront distribution url
@@ -36,7 +33,7 @@
   - Private
   - Versioning: Enabled
   - MFA Delete: Disabled
-  - Encryption: SSE-KMS (aws/s3)
+  - Encryption: SSE-S3
   - Access log: Disabled
   - Bucket policy:
 
@@ -47,6 +44,10 @@
     - `DeleteIncompleteUploads`: Delete after 7 days
     - `DeleteOldVersions`: All other noncurrent versions are permanently deleted after 30 days
     - `MoveToStandardIA`: Objects move to Standard-IA after 30 days
-  - Tags
-    - environment: sandbox
-    - managedBy: terraform
+
+## Upcoming
+
+- S3 Encryption: SSE-KMS (aws/s3)
+- Add new Cache Behaviors
+- Add new Origin Request Polices
+- Enable and configure WAF

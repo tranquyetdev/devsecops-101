@@ -14,17 +14,19 @@ runs:
       id: cache-node-modules
       uses: actions/cache@v3
       with:
-        path: '**/node_modules'
+        path: 'node_modules'
         key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
-
-    - uses: actions/cache@v3
-      name: Cache Cypress binary
-      with:
-        path: ~/.cache/Cypress
-        key: ${{ runner.os }}-cypress-${{ hashFiles('**/yarn.lock') }}
 
     - name: Install project dependencies if needed.
       if: steps.cache-node-modules.outputs.cache-hit != 'true'
       shell: bash
       run: |
         yarn install --ignore-platform --frozen-lockfile
+
+    - name: Cache Cypress binary
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/Cypress
+        key: ${{ runner.os }}-cypress-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-cypress-

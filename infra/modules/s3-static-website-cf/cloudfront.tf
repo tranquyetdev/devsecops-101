@@ -19,7 +19,7 @@ resource "aws_cloudfront_origin_access_control" "s3_oac" {
 resource "aws_cloudfront_distribution" "s3_distribution" {
   depends_on = [aws_s3_bucket.s3_bucket]
 
-  aliases = ["${local.subdomain}.${var.zone_name}"]
+  aliases = ["${var.subdomain}.${var.zone_name}"]
 
   origin {
     domain_name              = aws_s3_bucket.s3_bucket.bucket_regional_domain_name
@@ -29,7 +29,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
 
   enabled = true
   #   is_ipv6_enabled     = true
-  comment             = "CDN for ${var.s3_bucket_name}"
+  comment             = "CDN for ${var.bucket_name}"
   default_root_object = "index.html"
   price_class         = "PriceClass_200"
 
@@ -52,7 +52,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   #     path_pattern     = "/static/*"
   #     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
   #     cached_methods   = ["GET", "HEAD", "OPTIONS"]
-  #     target_origin_id = "s3-${var.s3_bucket_name}"
+  #     target_origin_id = "s3-${var.bucket_name}"
 
   #     forwarded_values {
   #       query_string = false
@@ -93,10 +93,6 @@ data "aws_route53_zone" "this" {
   name = var.zone_name
 }
 
-locals {
-  subdomain = "s3-static-website-cloudfront"
-}
-
 # CloudFront supports US East (N. Virginia) Region only.
 provider "aws" {
   alias  = "us-east-1"
@@ -110,7 +106,7 @@ module "acm" {
 
   domain_name               = var.zone_name
   zone_id                   = data.aws_route53_zone.this.id
-  subject_alternative_names = ["${local.subdomain}.${var.zone_name}"]
+  subject_alternative_names = ["${var.subdomain}.${var.zone_name}"]
 
   wait_for_validation = true
 
@@ -129,7 +125,7 @@ module "records" {
 
   records = [
     {
-      name = local.subdomain
+      name = var.subdomain
       type = "A"
       alias = {
         name    = aws_cloudfront_distribution.s3_distribution.domain_name

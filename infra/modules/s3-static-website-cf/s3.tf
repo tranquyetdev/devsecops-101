@@ -1,10 +1,9 @@
 // Create an S3 bucket with tags configuration
 resource "aws_s3_bucket" "s3_bucket" {
-  bucket = var.s3_bucket_name
+  bucket = var.bucket_name
   tags = {
-    Name        = var.s3_bucket_name
-    Environment = var.environment
-    ManagedBy   = "Terraform"
+    Name      = var.bucket_name
+    ManagedBy = "Terraform"
   }
 }
 
@@ -65,7 +64,7 @@ resource "aws_s3_bucket_cors_configuration" "s3-static-website" {
   cors_rule {
     allowed_headers = ["*"]
     allowed_methods = ["GET", "HEAD"]
-    allowed_origins = ["https://${local.subdomain}.${var.zone_name}"]
+    allowed_origins = ["https://${var.subdomain}.${var.zone_name}"]
     max_age_seconds = 3000
   }
 }

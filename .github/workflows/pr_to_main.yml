@@ -8,6 +8,7 @@ on:
       - '*.md'
     branches:
       - main
+
 jobs:
   setup:
     name: Setup CI/CD
@@ -15,6 +16,7 @@ jobs:
     outputs:
       cloudfrontMatrix: ${{ steps.set-matrix.outputs.cloudfrontMatrix }}
       ecsMatrix: ${{ steps.set-matrix.outputs.ecsMatrix }}
+      affectedProjects: ${{ steps.set-matrix.outputs.affectedProjects }}
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.11.0
@@ -86,7 +88,6 @@ jobs:
           else
             npx nx affected -t ${{ matrix.target }} --parallel=3
           fi
-
   ecsMatrix:
     name: ECS Matrix |> ${{ matrix.name }}
     runs-on: ubuntu-latest
@@ -94,24 +95,58 @@ jobs:
       - setup
       - tests
     strategy:
-      matrix: ${{ fromJson(needs.setup.outputs.ecsMatrix) }}
+      matrix: ${{ fromJSON(needs.setup.outputs.ecsMatrix) }}
     steps:
       - name: Todo
-        if: ${{ matrix.run }}
-        run: echo "Todo ECS matrix"
+        run: echo "TODO"
 
   cloudfrontMatrix:
     name: Cloudfront Matrix |> ${{ matrix.name }}
     runs-on: ubuntu-latest
+    permissions:
+      # This is required for requesting the JWT token
+      id-token: write
+      # This is required for actions/checkout
+      contents: read
     needs:
       - setup
       - tests
     strategy:
-      matrix: ${{ fromJson(needs.setup.outputs.cloudfrontMatrix) }}
+      matrix: ${{ fromJSON(needs.setup.outputs.cloudfrontMatrix) }}
     steps:
-      - name: Todo
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Install Dependencies
+        uses: ./.github/actions/install_deps
+
+      - name: Build ${{ matrix.name }}
         if: ${{ matrix.run }}
-        run: echo "Todo Cloudfront matrix"
+        run: |
+          npx nx run ${{matrix.name}}:build:production
+
+      - name: List files
+        run: ls -R dist/apps/${{ matrix.name }}
+
+      - name: configure aws credentials
+        if: ${{ matrix.run }}
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::${{ matrix.accountId }}:role/${{ matrix.vertical }}-${{ matrix.environment }}-cf-cicd-role
+          role-session-name: MY-CICD
+          aws-region: ${{ matrix.awsRegion }}
+
+      - uses: reggionick/s3-deploy@v3
+        with:
+          folder: dist/apps/${{ matrix.name }}
+          bucket: ${{ matrix.bucketName }}
+          bucket-region: ${{ matrix.awsRegion }}
+          dist-id: ${{ matrix.distributionId }}
+          invalidation: /*
+          private: true
 
   after:
     name: After CI/CD
