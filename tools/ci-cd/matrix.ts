@@ -29,6 +29,7 @@ export const getCloudFrontMatrix = (
         run: true,
         name: projectId,
         awsRegion: matrix.cloudfrontMatrix.awsRegion,
+        vertical: matrix.cloudfrontMatrix.vertical,
         environment,
         ...environmentConfig,
       });
@@ -75,6 +76,7 @@ export const getECSMatrix = (
         run: true,
         name: projectId,
         awsRegion: matrix.ecsMatrix.awsRegion,
+        vertical: matrix.ecsMatrix.vertical,
         environment,
         ...environmentConfig,
       });
