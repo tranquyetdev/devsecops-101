@@ -1,8 +1,9 @@
 
 resource "aws_iam_policy" "cicd" {
   path        = "/"
-  description = "My test policy"
+  description = "IAM policy for CI/CD role"
 
+  # Minimum permissions required for Github Actions to deploy to S3 and invalidate CloudFront
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -31,7 +32,7 @@ resource "aws_iam_policy" "cicd" {
 # Use the off-the-shelves module
 # https://registry.terraform.io/modules/unfunco/oidc-github/aws/latest
 module "oidc_github" {
-  # As this is a single instance per AWS account
+  # As this is a single resouce instance per AWS account
   # So for the sake of this demo, we will the preview environment to create the provider
   count = var.environment == "preview" ? 1 : 0
 
@@ -49,7 +50,6 @@ module "oidc_github" {
     aws_iam_policy.cicd.arn,
   ]
   max_session_duration = 7200
-  # iam_role_permissions_boundary = ""
 
   tags = {
     Description = "Managed by Terraform"
