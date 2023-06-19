@@ -103,6 +103,11 @@ jobs:
   cloudfrontMatrix:
     name: Cloudfront Matrix |> ${{ matrix.name }}
     runs-on: ubuntu-latest
+    permissions:
+      # This is required for requesting the JWT token
+      id-token: write
+      # This is required for actions/checkout
+      contents: read
     needs:
       - setup
       - tests
