@@ -2,6 +2,8 @@
   "projectId": "simple-nextjs-app",
   "matrix": {
     "ecsMatrix": {
+      "awsRegion": "ap-southeast-1",
+      "vertical": "sna",
       "environments": {
         "preview": {
           "accountId": "1111"

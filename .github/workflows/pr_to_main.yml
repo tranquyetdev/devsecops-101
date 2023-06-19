@@ -8,6 +8,7 @@ on:
       - '*.md'
     branches:
       - main
+
 jobs:
   setup:
     name: Setup CI/CD
@@ -123,14 +124,22 @@ jobs:
           npx nx run ${{matrix.name}}:build:production
 
       - name: List files
-        run: ls -R
+        run: ls -R dist/apps/${{ matrix.name }}
 
-      # - uses: lbertenasco/s3-deploy@v1
-      #   with:
-      #     folder: dist/apps/${{ matrix.name }}
-      #     bucket: ${{ secrets.S3_BUCKET }}
-      #     dist-id: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
-      #     invalidation: / *
+      - name: configure aws credentials
+        if: ${{ matrix.run }}
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::${{ matrix.accountId }}:role/${{ matrix.vertical }}-${{ matrix.environment }}-cf-cicd-role
+          role-session-name: MY-CICD
+          aws-region: ${{ matrix.awsRegion }}
+
+      - uses: lbertenasco/s3-deploy@v1
+        with:
+          folder: dist/apps/${{ matrix.name }}
+          bucket: ${{ matrix.bucketName }}
+          dist-id: ${{ matrix.distributionId }}
+          invalidation: /*
 
   after:
     name: After CI/CD
