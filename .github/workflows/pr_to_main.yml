@@ -146,6 +146,7 @@ jobs:
           bucket-region: ${{ matrix.awsRegion }}
           dist-id: ${{ matrix.distributionId }}
           invalidation: /*
+          private: true
 
   after:
     name: After CI/CD
