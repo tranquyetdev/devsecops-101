@@ -139,10 +139,11 @@ jobs:
           role-session-name: MY-CICD
           aws-region: ${{ matrix.awsRegion }}
 
-      - uses: lbertenasco/s3-deploy@v1
+      - uses: reggionick/s3-deploy@v3
         with:
           folder: dist/apps/${{ matrix.name }}
           bucket: ${{ matrix.bucketName }}
+          bucket-region: ${{ matrix.awsRegion }}
           dist-id: ${{ matrix.distributionId }}
           invalidation: /*
 
