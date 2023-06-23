@@ -63,7 +63,11 @@
       "options": {
         "lintFilePatterns": ["apps/simple-nextjs-app/**/*.{ts,tsx,js,jsx}"]
       }
+    },
+    "docker-build": {
+      "dependsOn": ["build"],
+      "command": "docker build -f apps/simple-nextjs-app/Dockerfile . -t simple-nextjs-app"
     }
   },
-  "tags": []
+  "tags": ["tier:frontend"]
 }
