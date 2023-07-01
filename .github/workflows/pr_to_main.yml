@@ -102,7 +102,7 @@ jobs:
     strategy:
       matrix: ${{ fromJSON(needs.setup.outputs.ecsMatrix) }}
     env:
-      ECR_REPOSITORY: acp
+      ECR_REPOSITORY: simple-nextjs-app
       ECS_SERVICE: simple-nextjs-app
       ECS_CLUSTER: acp-preview
       ECS_TASK_DEFINITION: simple-nextjs-app
