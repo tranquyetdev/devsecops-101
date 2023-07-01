@@ -3,16 +3,16 @@
   "matrix": {
     "ecsMatrix": {
       "awsRegion": "ap-southeast-1",
-      "vertical": "sna",
+      "vertical": "sra",
       "environments": {
         "preview": {
-          "accountId": "1111"
+          "accountId": "755398944131"
         },
         "staging": {
-          "accountId": "1111"
+          "accountId": "755398944131"
         },
         "prod": {
-          "accountId": "2222"
+          "accountId": "755398944131"
         }
       }
     }
