@@ -91,6 +91,9 @@ jobs:
   ecsMatrix:
     name: ECS Matrix |> ${{ matrix.name }}
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     needs:
       - setup
       - tests
