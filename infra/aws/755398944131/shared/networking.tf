@@ -14,7 +14,13 @@ module "vpc" {
   azs  = local.azs
 
   private_subnets = local.private_subnets
-  public_subnets  = local.public_subnets
+  private_subnet_tags = {
+    Tier = "private"
+  }
+  public_subnets = local.public_subnets
+  public_subnet_tags = {
+    Tier = "public"
+  }
 
   create_igw                   = true
   enable_nat_gateway           = true
