@@ -9,8 +9,8 @@ variable "aws_account_id" {
   type        = string
 }
 
-variable "vertical" {
-  description = "Vertical"
+variable "namespace" {
+  description = "namespace"
   type        = string
   default     = "sra"
 }

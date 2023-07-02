@@ -19,7 +19,7 @@ provider "aws" {
 module "s3_static_website_cf" {
   source = "../../../modules/s3-static-website-cf"
 
-  bucket_name = "${var.vertical}-${var.environment}-${var.app_id}"
+  bucket_name = "${var.namespace}-${var.environment}-${var.app_id}"
   zone_name   = var.zone_name
   subdomain   = "${var.environment}-${var.app_id}"
 }

@@ -19,16 +19,17 @@ export const getCloudFrontMatrix = (
     const deployConfig = getDeployConfig(project);
 
     if (deployConfig) {
-      const { matrix, projectId } = deployConfig;
+      const { matrix, appName, appId, namespace } = deployConfig;
       if (matrix.cloudfrontMatrix) {
         const environmentConfig =
           matrix.cloudfrontMatrix.environments[environment];
 
         deployMatrix.include.push({
           run: true,
-          name: projectId,
+          appName,
+          appId,
+          namespace,
           awsRegion: matrix.cloudfrontMatrix.awsRegion,
-          vertical: matrix.cloudfrontMatrix.vertical,
           environment,
           ...environmentConfig,
         });
@@ -43,7 +44,7 @@ export const getCloudFrontMatrix = (
   ) {
     deployMatrix.include.push({
       run: false,
-      name: 'SKIP',
+      appName: 'SKIP',
     });
   }
 
@@ -71,15 +72,16 @@ export const getECSMatrix = (
     const deployConfig = getDeployConfig(project);
 
     if (deployConfig) {
-      const { matrix, projectId } = deployConfig;
+      const { matrix, appName, appId, namespace } = deployConfig;
       if (matrix.ecsMatrix) {
         const environmentConfig = matrix.ecsMatrix.environments[environment];
 
         deployMatrix.include.push({
           run: true,
-          name: projectId,
+          appName,
+          appId,
+          namespace,
           awsRegion: matrix.ecsMatrix.awsRegion,
-          vertical: matrix.ecsMatrix.vertical,
           environment,
           ...environmentConfig,
         });
@@ -94,7 +96,7 @@ export const getECSMatrix = (
   ) {
     deployMatrix.include.push({
       run: false,
-      name: 'SKIP',
+      appName: 'SKIP',
     });
   }
 

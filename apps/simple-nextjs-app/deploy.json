@@ -1,9 +1,10 @@
 {
-  "projectId": "simple-nextjs-app",
+  "namespace": "acp",
+  "appName": "simple-nextjs-app",
+  "appId": "sna",
   "matrix": {
     "ecsMatrix": {
       "awsRegion": "ap-southeast-1",
-      "vertical": "sra",
       "environments": {
         "preview": {
           "accountId": "755398944131"

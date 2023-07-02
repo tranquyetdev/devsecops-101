@@ -91,7 +91,7 @@ jobs:
           fi
 
   ecsMatrix:
-    name: ECS Matrix |> ${{ matrix.name }}
+    name: ECS Matrix |> ${{ matrix.appName }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -102,11 +102,11 @@ jobs:
     strategy:
       matrix: ${{ fromJSON(needs.setup.outputs.ecsMatrix) }}
     env:
-      ECR_REPOSITORY: ${{ matrix.name }}
-      ECS_SERVICE: ${{ matrix.name }}
-      ECS_CLUSTER: acp-preview
-      ECS_TASK_DEFINITION: apps/${{ matrix.name }}/task-definition.json
-      CONTAINER_NAME: nextjs
+      ECR_REPOSITORY: ${{ matrix.namespace }}/${{ matrix.appName }}
+      ECS_SERVICE: ${{ matrix.namespace }}-${{ matrix.environment }}-${{ matrix.appId }}-service
+      ECS_CLUSTER: ${{ matrix.namespace }}-${{ matrix.environment }}-${{ matrix.appId }}-cluster
+      ECS_TASK_DEFINITION: apps/${{ matrix.appName }}/task-definition.json
+      CONTAINER_NAME: ${{ matrix.appId }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -117,43 +117,43 @@ jobs:
       - name: Install Dependencies
         uses: ./.github/actions/install_deps
 
-      - name: Build ${{ matrix.name }}
+      - name: Build ${{ matrix.appName }}
         if: ${{ matrix.run }}
         run: |
-          npx nx run ${{matrix.name}}:build:production
+          npx nx run ${{matrix.appName}}:build:production
 
       - name: List files
-        run: ls -R dist/apps/${{ matrix.name }}
+        run: ls -R dist/apps/${{ matrix.appName }}
 
       - name: configure aws credentials
         if: ${{ matrix.run }}
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::${{ matrix.accountId }}:role/${{ matrix.vertical }}-${{ matrix.environment }}-cf-cicd-role
+          role-to-assume: arn:aws:iam::${{ matrix.accountId }}:role/${{ matrix.namespace }}-shared-cicd-role
           role-session-name: MY-CICD
           aws-region: ${{ matrix.awsRegion }}
       - name: Login to Amazon ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@62f4f872db3836360b72999f4b87f1ff13310f3a
+        uses: aws-actions/amazon-ecr-login@v1
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -f apps/${{matrix.name}}/Dockerfile . -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker build -f apps/${{matrix.appName}}/Dockerfile . -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@c804dfbdd57f713b6c079302a4c01db7017a36fc
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: ${{ env.ECS_TASK_DEFINITION }}
           container-name: ${{ env.CONTAINER_NAME }}
           image: ${{ steps.build-image.outputs.image }}
 
       - name: Deploy Amazon ECS task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@df9643053eda01f169e64a0e60233aacca83799a
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: ${{ env.ECS_SERVICE }}
@@ -161,7 +161,7 @@ jobs:
           wait-for-service-stability: true
 
   cloudfrontMatrix:
-    name: Cloudfront Matrix |> ${{ matrix.name }}
+    name: Cloudfront Matrix |> ${{ matrix.appName }}
     runs-on: ubuntu-latest
     permissions:
       # This is required for requesting the JWT token
@@ -183,25 +183,25 @@ jobs:
       - name: Install Dependencies
         uses: ./.github/actions/install_deps
 
-      - name: Build ${{ matrix.name }}
+      - name: Build ${{ matrix.appName }}
         if: ${{ matrix.run }}
         run: |
-          npx nx run ${{matrix.name}}:build:production
+          npx nx run ${{matrix.appName}}:build:production
 
       - name: List files
-        run: ls -R dist/apps/${{ matrix.name }}
+        run: ls -R dist/apps/${{ matrix.appName }}
 
       - name: configure aws credentials
         if: ${{ matrix.run }}
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::${{ matrix.accountId }}:role/${{ matrix.vertical }}-${{ matrix.environment }}-cf-cicd-role
+          role-to-assume: arn:aws:iam::${{ matrix.accountId }}:role/${{ matrix.namespace }}-shared-cicd-role
           role-session-name: MY-CICD
           aws-region: ${{ matrix.awsRegion }}
 
       - uses: reggionick/s3-deploy@v3
         with:
-          folder: dist/apps/${{ matrix.name }}
+          folder: dist/apps/${{ matrix.appName }}
           bucket: ${{ matrix.bucketName }}
           bucket-region: ${{ matrix.awsRegion }}
           dist-id: ${{ matrix.distributionId }}

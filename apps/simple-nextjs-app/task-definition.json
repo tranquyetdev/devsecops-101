@@ -1,45 +1,41 @@
 {
   "containerDefinitions": [
     {
-      "name": "nextjs",
-      "image": "simple-nextjs-app:latest",
-      "cpu": 0,
+      "name": "sna",
+      "image": "acp/simple-nextjs-app:latest",
+      "cpu": 512,
+      "memory": 1024,
       "portMappings": [
         {
           "containerPort": 3000,
           "hostPort": 3000,
           "protocol": "tcp",
-          "name": "nextjs-3000-tcp",
-          "appProtocol": "http"
+          "name": "sna"
         }
       ],
       "essential": true,
       "environment": [],
-      "environmentFiles": [],
       "mountPoints": [],
       "volumesFrom": [],
-      "ulimits": [],
-      "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-          "awslogs-create-group": "true",
-          "awslogs-group": "/ecs/simple-nextjs-app",
-          "awslogs-region": "ap-southeast-1",
-          "awslogs-stream-prefix": "ecs"
-        }
-      }
+      "startTimeout": 30,
+      "stopTimeout": 120,
+      "privileged": false,
+      "readonlyRootFilesystem": false,
+      "interactive": false,
+      "pseudoTerminal": false
     }
   ],
-  "family": "simple-nextjs-app",
-  "executionRoleArn": "arn:aws:iam::755398944131:role/ecsTaskExecutionRole",
+  "family": "acp-preview-sna-service",
+  "executionRoleArn": "arn:aws:iam::755398944131:role/acp-preview-sna-service-20230702132313543100000002",
   "networkMode": "awsvpc",
   "volumes": [],
   "placementConstraints": [],
+  "compatibilities": ["EC2", "FARGATE"],
   "runtimePlatform": {
     "cpuArchitecture": "X86_64",
     "operatingSystemFamily": "LINUX"
   },
   "requiresCompatibilities": ["FARGATE"],
   "cpu": "1024",
-  "memory": "2048"
+  "memory": "4096"
 }

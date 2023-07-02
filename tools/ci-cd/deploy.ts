@@ -1,11 +1,13 @@
 export interface IDeployConfig {
-  projectId: string;
+  namespace: string;
+  appName: string;
+  appId: string;
   matrix: Record<string, any>;
 }
 
 export interface IDeployMatrixActionConfig {
   run: boolean;
-  name: string;
+  appName: string;
 }
 
 export interface IDeployMatrix {
@@ -13,17 +15,17 @@ export interface IDeployMatrix {
 }
 
 /**
- * Get project deployment configuration
+ * Get app deployment configuration
  *
- * @param projectId project id
+ * @param appName Application name
  * @returns deployment configuration
  */
-export const getDeployConfig = (projectId: string): IDeployConfig | null => {
+export const getDeployConfig = (appName: string): IDeployConfig | null => {
   try {
-    const deployConfig = require(`../../apps/${projectId}/deploy.json`);
+    const deployConfig = require(`../../apps/${appName}/deploy.json`);
     return deployConfig;
   } catch (e) {
-    console.log(`No deploy config found for project ${projectId}`);
+    console.log(`No deploy config found for app ${appName}`);
     return null;
   }
 };
