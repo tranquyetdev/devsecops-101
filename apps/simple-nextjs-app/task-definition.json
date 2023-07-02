@@ -1,5 +1,4 @@
 {
-  "taskDefinitionArn": "arn:aws:ecs:ap-southeast-1:755398944131:task-definition/simple-nextjs-app:2",
   "containerDefinitions": [
     {
       "name": "nextjs",
@@ -8,7 +7,7 @@
       "portMappings": [
         {
           "containerPort": 3000,
-          "hostPort": 3000,
+          "hostPort": 80,
           "protocol": "tcp",
           "name": "nextjs-3000-tcp",
           "appProtocol": "http"
@@ -34,38 +33,13 @@
   "family": "simple-nextjs-app",
   "executionRoleArn": "arn:aws:iam::755398944131:role/ecsTaskExecutionRole",
   "networkMode": "awsvpc",
-  "revision": 2,
   "volumes": [],
-  "status": "ACTIVE",
-  "requiresAttributes": [
-    {
-      "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
-    },
-    {
-      "name": "ecs.capability.execution-role-awslogs"
-    },
-    {
-      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
-    },
-    {
-      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
-    },
-    {
-      "name": "ecs.capability.task-eni"
-    },
-    {
-      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
-    }
-  ],
   "placementConstraints": [],
-  "compatibilities": ["EC2", "FARGATE"],
   "runtimePlatform": {
     "cpuArchitecture": "X86_64",
     "operatingSystemFamily": "LINUX"
   },
   "requiresCompatibilities": ["FARGATE"],
   "cpu": "1024",
-  "memory": "2048",
-  "registeredAt": "2023-07-02T00:14:50.614000+07:00",
-  "registeredBy": "arn:aws:sts::755398944131:assumed-role/AWSReservedSSO_AWSAdministratorAccess_53f1e5012e51f82a/admin"
+  "memory": "2048"
 }
