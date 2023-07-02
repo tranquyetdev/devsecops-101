@@ -102,10 +102,10 @@ jobs:
     strategy:
       matrix: ${{ fromJSON(needs.setup.outputs.ecsMatrix) }}
     env:
-      ECR_REPOSITORY: simple-nextjs-app
-      ECS_SERVICE: simple-nextjs-app
+      ECR_REPOSITORY: ${{ matrix.name }}
+      ECS_SERVICE: ${{ matrix.name }}
       ECS_CLUSTER: acp-preview
-      ECS_TASK_DEFINITION: task-definition.json
+      ECS_TASK_DEFINITION: apps/${{ matrix.name }}/task-definition.json
       CONTAINER_NAME: nextjs
     steps:
       - name: Checkout
