@@ -105,7 +105,7 @@ jobs:
       ECR_REPOSITORY: simple-nextjs-app
       ECS_SERVICE: simple-nextjs-app
       ECS_CLUSTER: acp-preview
-      ECS_TASK_DEFINITION: simple-nextjs-app
+      ECS_TASK_DEFINITION: task-definition.json
       CONTAINER_NAME: nextjs
     steps:
       - name: Checkout
@@ -139,8 +139,7 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          # IMAGE_TAG: ${{ github.sha }}
-          IMAGE_TAG: latest
+          IMAGE_TAG: ${{ github.sha }}
         run: |
           docker build -f apps/${{matrix.name}}/Dockerfile . -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
