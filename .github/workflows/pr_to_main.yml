@@ -90,6 +90,7 @@ jobs:
             npx nx affected -t ${{ matrix.target }} --parallel=3
           fi
 
+  # ECS Matrix
   ecsMatrix:
     name: ECS Matrix |> ${{ matrix.appName }}
     runs-on: ubuntu-latest
@@ -104,7 +105,7 @@ jobs:
     env:
       ECR_REPOSITORY: ${{ matrix.namespace }}/${{ matrix.appName }}
       ECS_SERVICE: ${{ matrix.namespace }}-${{ matrix.environment }}-${{ matrix.appId }}-service
-      ECS_CLUSTER: ${{ matrix.namespace }}-${{ matrix.environment }}-${{ matrix.appId }}-cluster
+      ECS_CLUSTER: ${{ matrix.namespace }}-${{ matrix.environment }}-cluster
       ECS_TASK_DEFINITION: apps/${{ matrix.appName }}/task-definition.json
       CONTAINER_NAME: ${{ matrix.appId }}
     steps:
@@ -160,6 +161,7 @@ jobs:
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
 
+  # Cloudfront Matrix
   cloudfrontMatrix:
     name: Cloudfront Matrix |> ${{ matrix.appName }}
     runs-on: ubuntu-latest
