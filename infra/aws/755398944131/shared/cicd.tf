@@ -43,7 +43,7 @@ resource "aws_iam_policy" "ecs_deploy" {
           "ecr:CompleteLayerUpload",
           "ecr:PutImage"
         ],
-        "Resource" : "arn:aws:ecr:${var.aws_region}:${var.aws_account_id}:repository/simple-nextjs-app"
+        "Resource" : "arn:aws:ecr:${var.aws_region}:${var.aws_account_id}:repository/${local.sna_repo_name}"
       },
       {
         "Sid" : "ECSRunTask",
@@ -52,7 +52,7 @@ resource "aws_iam_policy" "ecs_deploy" {
         "Resource" : "arn:aws:ecs:${var.aws_region}:${var.aws_account_id}:task/*",
         "Condition" : {
           "ArnEquals" : {
-            "ecs:cluster" : "arn:aws:ecs:${var.aws_region}:${var.aws_account_id}:cluster/acp-preview"
+            "ecs:cluster" : "arn:aws:ecs:${var.aws_region}:${var.aws_account_id}:cluster/${var.namespace}-preview-sna-cluster"
           }
         }
       },
@@ -73,7 +73,7 @@ resource "aws_iam_policy" "ecs_deploy" {
         "Effect" : "Allow",
         "Action" : ["ecs:UpdateService", "ecs:DescribeServices"],
         "Resource" : [
-          "arn:aws:ecs:${var.aws_region}:${var.aws_account_id}:service/acp-preview/simple-nextjs-app"
+          "arn:aws:ecs:${var.aws_region}:${var.aws_account_id}:service/${var.namespace}-preview-sna-cluster/${var.namespace}-preview-sna-service"
         ]
       }
     ]

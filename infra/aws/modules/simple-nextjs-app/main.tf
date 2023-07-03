@@ -1,39 +1,20 @@
+locals {
+  app_id         = "sna"
+  app_name       = "simple-nextjs-app"
+  name           = "${var.namespace}-${var.environment}-${local.app_id}"
+  container_name = local.app_id
+  container_port = 3000
+
+  tags = {
+    Name        = local.name
+    Environment = var.environment
+    Description = "Managed by Terraform"
+  }
+}
+
 data "aws_ecr_repository" "current" {
   name = "${var.namespace}/${local.app_name}"
 }
-
-locals {
-  container_name = var.app_id
-  container_port = 3000
-}
-
-################################################################################
-# Cluster
-################################################################################
-module "ecs_cluster" {
-  source  = "terraform-aws-modules/ecs/aws//modules/cluster"
-  version = "5.2.0"
-
-  cluster_name = "${local.name}-cluster"
-
-  # Capacity provider
-  fargate_capacity_providers = {
-    FARGATE = {
-      default_capacity_provider_strategy = {
-        weight = 50
-        base   = 20
-      }
-    }
-    FARGATE_SPOT = {
-      default_capacity_provider_strategy = {
-        weight = 50
-      }
-    }
-  }
-
-  tags = local.tags
-}
-
 
 ################################################################################
 # Service
@@ -43,7 +24,7 @@ module "ecs_service" {
   version = "5.2.0"
 
   name        = "${local.name}-service"
-  cluster_arn = module.ecs_cluster.arn
+  cluster_arn = var.ecs_cluster_arn
 
   cpu    = 1024
   memory = 4096
@@ -119,7 +100,7 @@ module "ecs_service" {
     }
   }
 
-  subnet_ids = local.private_subnets
+  subnet_ids = var.private_subnets
   security_group_rules = {
     alb_ingress_3000 = {
       type                     = "ingress"
@@ -150,13 +131,13 @@ module "alb_sg" {
 
   name        = "${local.name}-alb-sg"
   description = "Security group for ALB"
-  vpc_id      = local.vpc_id
+  vpc_id      = var.vpc_id
 
   ingress_rules       = ["http-80-tcp"]
   ingress_cidr_blocks = ["0.0.0.0/0"]
 
   egress_rules       = ["all-all"]
-  egress_cidr_blocks = local.private_subnets_cidr_blocks
+  egress_cidr_blocks = var.private_subnets_cidr_blocks
 
   tags = local.tags
 }
@@ -169,8 +150,8 @@ module "alb" {
 
   load_balancer_type = "application"
 
-  vpc_id          = local.vpc_id
-  subnets         = local.public_subnets
+  vpc_id          = var.vpc_id
+  subnets         = var.public_subnets
   security_groups = [module.alb_sg.security_group_id]
 
   http_tcp_listeners = [
