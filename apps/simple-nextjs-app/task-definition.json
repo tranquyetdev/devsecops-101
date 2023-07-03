@@ -26,7 +26,8 @@
     }
   ],
   "family": "acp-preview-sna-service",
-  "executionRoleArn": "arn:aws:iam::755398944131:role/acp-preview-sna-service-20230702132313543100000002",
+  "taskRoleArn": "arn:aws:iam::755398944131:role/acp-preview-sna-service-20230703142613115200000001",
+  "executionRoleArn": "arn:aws:iam::755398944131:role/acp-preview-sna-service-20230703142613120000000003",
   "networkMode": "awsvpc",
   "volumes": [],
   "placementConstraints": [],
