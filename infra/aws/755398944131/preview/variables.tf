@@ -18,3 +18,8 @@ variable "environment" {
   type        = string
 }
 
+# DNS
+variable "zone_name" {
+  description = "Zone name"
+  type        = string
+}

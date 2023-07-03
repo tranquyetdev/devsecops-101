@@ -73,12 +73,16 @@ module "sna" {
   ecs_cluster_arn = module.ecs_cluster.arn
 }
 
-# module "sra" {
-#   source                      = "../../modules/simple-react-app"
-#   namespace                   = var.namespace
-#   environment                 = var.environment
-#   vpc_id                      = local.vpc_id
-#   public_subnets              = local.public_subnets
-#   private_subnets             = local.private_subnets
-#   private_subnets_cidr_blocks = local.private_subnets_cidr_blocks
-# }
+################################################################################
+# APP: simple-react-app
+################################################################################
+module "sra" {
+  source = "../../modules/simple-react-app"
+
+  # context
+  namespace   = var.namespace
+  environment = var.environment
+
+  # website
+  zone_name = var.zone_name
+}

@@ -1,13 +1,15 @@
-variable "bucket_name" {
-  description = "AWS S3 bucket name"
+# Context
+variable "namespace" {
+  description = "Namespace"
   type        = string
 }
 
-variable "subdomain" {
-  description = "Subdomain"
+variable "environment" {
+  description = "Environment"
   type        = string
 }
 
+# Website
 variable "zone_name" {
   description = "Zone name"
   type        = string
