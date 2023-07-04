@@ -1,0 +1,42 @@
+{
+  "containerDefinitions": [
+    {
+      "name": "sna",
+      "image": "acp/simple-nextjs-app:latest",
+      "cpu": 512,
+      "memory": 1024,
+      "portMappings": [
+        {
+          "containerPort": 3000,
+          "hostPort": 3000,
+          "protocol": "tcp",
+          "name": "sna"
+        }
+      ],
+      "essential": true,
+      "environment": [],
+      "mountPoints": [],
+      "volumesFrom": [],
+      "startTimeout": 30,
+      "stopTimeout": 120,
+      "privileged": false,
+      "readonlyRootFilesystem": false,
+      "interactive": false,
+      "pseudoTerminal": false
+    }
+  ],
+  "family": "acp-preview-sna-service",
+  "taskRoleArn": "arn:aws:iam::755398944131:role/acp-preview-sna-service-20230703142613115200000001",
+  "executionRoleArn": "arn:aws:iam::755398944131:role/acp-preview-sna-service-20230703142613120000000003",
+  "networkMode": "awsvpc",
+  "volumes": [],
+  "placementConstraints": [],
+  "compatibilities": ["EC2", "FARGATE"],
+  "runtimePlatform": {
+    "cpuArchitecture": "X86_64",
+    "operatingSystemFamily": "LINUX"
+  },
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "1024",
+  "memory": "4096"
+}

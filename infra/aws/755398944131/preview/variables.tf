@@ -1,7 +1,6 @@
 variable "aws_region" {
   description = "AWS region"
   type        = string
-  default     = "ap-southeast-1"
 }
 
 variable "aws_account_id" {
@@ -9,24 +8,17 @@ variable "aws_account_id" {
   type        = string
 }
 
-variable "vertical" {
-  description = "Vertical"
+variable "namespace" {
+  description = "Namespace"
   type        = string
-  default     = "sra"
-}
-
-variable "app_id" {
-  description = "Application Id"
-  type        = string
-  default     = "simple-react-app"
 }
 
 variable "environment" {
   description = "Environment"
   type        = string
-  default     = "preview"
 }
 
+# DNS
 variable "zone_name" {
   description = "Zone name"
   type        = string

@@ -1,8 +1,4 @@
-import {
-  IDeployMatrix,
-  IDeployMatrixActionConfig,
-  getDeployConfig,
-} from './deploy';
+import { IDeployMatrix, getDeployConfig } from './deploy';
 
 /**
  * Get CloudFront deployment matrix
@@ -20,19 +16,24 @@ export const getCloudFrontMatrix = (
   };
 
   affectedProjects.forEach((project) => {
-    const { matrix, projectId } = getDeployConfig(project);
-    if (matrix.cloudfrontMatrix) {
-      const environmentConfig =
-        matrix.cloudfrontMatrix.environments[environment];
+    const deployConfig = getDeployConfig(project);
 
-      deployMatrix.include.push({
-        run: true,
-        name: projectId,
-        awsRegion: matrix.cloudfrontMatrix.awsRegion,
-        vertical: matrix.cloudfrontMatrix.vertical,
-        environment,
-        ...environmentConfig,
-      });
+    if (deployConfig) {
+      const { matrix, appName, appId, namespace } = deployConfig;
+      if (matrix.cloudfrontMatrix) {
+        const environmentConfig =
+          matrix.cloudfrontMatrix.environments[environment];
+
+        deployMatrix.include.push({
+          run: true,
+          appName,
+          appId,
+          namespace,
+          awsRegion: matrix.cloudfrontMatrix.awsRegion,
+          environment,
+          ...environmentConfig,
+        });
+      }
     }
   });
 
@@ -43,7 +44,7 @@ export const getCloudFrontMatrix = (
   ) {
     deployMatrix.include.push({
       run: false,
-      name: 'SKIP',
+      appName: 'SKIP',
     });
   }
 
@@ -68,18 +69,23 @@ export const getECSMatrix = (
   };
 
   affectedProjects.forEach((project) => {
-    const { matrix, projectId } = getDeployConfig(project);
-    if (matrix.ecsMatrix) {
-      const environmentConfig = matrix.ecsMatrix.environments[environment];
+    const deployConfig = getDeployConfig(project);
 
-      deployMatrix.include.push({
-        run: true,
-        name: projectId,
-        awsRegion: matrix.ecsMatrix.awsRegion,
-        vertical: matrix.ecsMatrix.vertical,
-        environment,
-        ...environmentConfig,
-      });
+    if (deployConfig) {
+      const { matrix, appName, appId, namespace } = deployConfig;
+      if (matrix.ecsMatrix) {
+        const environmentConfig = matrix.ecsMatrix.environments[environment];
+
+        deployMatrix.include.push({
+          run: true,
+          appName,
+          appId,
+          namespace,
+          awsRegion: matrix.ecsMatrix.awsRegion,
+          environment,
+          ...environmentConfig,
+        });
+      }
     }
   });
 
@@ -90,7 +96,7 @@ export const getECSMatrix = (
   ) {
     deployMatrix.include.push({
       run: false,
-      name: 'SKIP',
+      appName: 'SKIP',
     });
   }
 

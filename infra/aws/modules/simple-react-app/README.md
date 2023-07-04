@@ -1,14 +1,12 @@
-# SIMPLE-REACT-APP INFRA
+# infra / simple-react-app
 
-## Requirements
+## Demo
 
-- [Large-size](https://github.com/antonbabenko/terraform-best-practices/tree/master/examples/large-terraform) / [Medium-size](https://github.com/antonbabenko/terraform-best-practices/tree/master/examples/medium-terraform) Infrastructure
-- Region: ap-southeast-1
+## Specs
+
 - CloudFront
 
   - S3 origin
-  - Price class: PriceClass_200 (North America, Europe, Asia, Middle East, and Africa)
-  - Compress objects: Yes
   - Origin access control (OCA)
   - Viewer
     - HTTPS only
@@ -19,22 +17,15 @@
     - Cache policy: Managed-CachingOptimized
     - Request policy: Managed-CORS-S3Origin
 
-  - Enable Origin Shield: No
-
   - Custom doman: Yes
   - SSL certificate: ACM
 
-- Route53
+- S3 origin:
 
-  - Alias record point to cloudfront distribution url
-
-- S3 bucket:
-
-  - Private
+  - Private bucket
   - Versioning: Enabled
   - MFA Delete: Disabled
   - Encryption: SSE-S3
-  - Access log: Disabled
   - Bucket policy:
 
     - Enforce SSL in transit
