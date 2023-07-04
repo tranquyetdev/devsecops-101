@@ -10,14 +10,14 @@ resource "aws_iam_policy" "s3_deploy" {
       {
         "Action" : ["s3:PutObject", "s3:PutObjectAcl"],
         "Effect" : "Allow",
-        "Resource" : ["arn:aws:s3:::sra-*-simple-react-app/*"],
+        "Resource" : ["arn:aws:s3:::acp-preview-sra/*"],
         "Sid" : "AllowUploadToS3Bucket"
       },
       {
         "Action" : ["cloudfront:CreateInvalidation"],
         "Effect" : "Allow",
         "Resource" : [
-          "arn:aws:cloudfront::${var.aws_account_id}:distribution/E2LOUIN5OCY3UR"
+          "arn:aws:cloudfront::${var.aws_account_id}:distribution/EWWWBSSQ5HDOX"
         ],
         "Sid" : "CloudFrontInvalidation"
       }
@@ -51,8 +51,8 @@ resource "aws_iam_policy" "ecs_deploy" {
         "Action" : ["ecs:RunTask", "ecs:DescribeTasks"],
         "Resource" : "arn:aws:ecs:${var.aws_region}:${var.aws_account_id}:task/*",
         "Condition" : {
-          "ArnEquals" : {
-            "ecs:cluster" : "arn:aws:ecs:${var.aws_region}:${var.aws_account_id}:cluster/${var.namespace}-preview-sna-cluster"
+          "ArnLike" : {
+            "ecs:cluster" : "arn:aws:ecs:${var.aws_region}:${var.aws_account_id}:cluster/${var.namespace}-*-cluster"
           }
         }
       },
@@ -66,14 +66,17 @@ resource "aws_iam_policy" "ecs_deploy" {
         "Sid" : "PassRolesInTaskDefinition",
         "Effect" : "Allow",
         "Action" : ["iam:PassRole"],
-        "Resource" : ["arn:aws:iam::${var.aws_account_id}:role/ecsTaskExecutionRole"]
+        "Resource" : [
+          "arn:aws:iam::${var.aws_account_id}:role/ecsTaskExecutionRole",
+          "arn:aws:iam::${var.aws_account_id}:role/acp-*-sna-service-*"
+        ]
       },
       {
         "Sid" : "DeployService",
         "Effect" : "Allow",
         "Action" : ["ecs:UpdateService", "ecs:DescribeServices"],
         "Resource" : [
-          "arn:aws:ecs:${var.aws_region}:${var.aws_account_id}:service/${var.namespace}-preview-sna-cluster/${var.namespace}-preview-sna-service"
+          "arn:aws:ecs:${var.aws_region}:${var.aws_account_id}:service/${var.namespace}-*-cluster/${var.namespace}-*-sna-service",
         ]
       }
     ]

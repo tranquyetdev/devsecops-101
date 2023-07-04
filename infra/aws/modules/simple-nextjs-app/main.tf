@@ -1,6 +1,7 @@
 locals {
   app_id         = "sna"
   app_name       = "simple-nextjs-app"
+  custom_domain  = "${var.environment}.${local.app_id}.${var.zone_name}"
   name           = "${var.namespace}-${var.environment}-${local.app_id}"
   container_name = local.app_id
   container_port = 3000
@@ -123,7 +124,7 @@ module "ecs_service" {
 }
 
 ################################################################################
-# Supporting Resources
+# ALB and Custom domain
 ################################################################################
 module "alb_sg" {
   source  = "terraform-aws-modules/security-group/aws"
@@ -171,5 +172,44 @@ module "alb" {
     },
   ]
 
+  https_listeners = [
+    {
+      port               = 443
+      protocol           = "HTTPS"
+      certificate_arn    = module.acm.acm_certificate_arn
+      target_group_index = 0
+    }
+  ]
+
   tags = local.tags
+}
+
+data "aws_route53_zone" "this" {
+  name = var.zone_name
+}
+
+resource "aws_route53_record" "this" {
+  zone_id = data.aws_route53_zone.this.zone_id
+  name    = local.custom_domain
+  type    = "A"
+
+  alias {
+    name                   = module.alb.lb_dns_name
+    zone_id                = module.alb.lb_zone_id
+    evaluate_target_health = true
+  }
+}
+
+################################################################################
+# ACM certificate
+################################################################################
+module "acm" {
+  source  = "terraform-aws-modules/acm/aws"
+  version = "~> 4.0"
+
+  domain_name               = var.zone_name
+  zone_id                   = data.aws_route53_zone.this.id
+  subject_alternative_names = ["${local.custom_domain}"]
+
+  wait_for_validation = true
 }

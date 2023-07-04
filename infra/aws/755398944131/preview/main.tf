@@ -71,6 +71,7 @@ module "sna" {
 
   # ecs cluster
   ecs_cluster_arn = module.ecs_cluster.arn
+  zone_name       = var.zone_name
 }
 
 ################################################################################
