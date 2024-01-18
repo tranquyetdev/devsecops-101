@@ -11,7 +11,7 @@
     "@nestjs/core": "^9.1.1",
     "@nestjs/platform-express": "^9.1.1",
     "@swc/helpers": "~0.5.0",
-    "axios": "^1.0.0",
+    "axios": "^1.6.3",
     "next": "13.4.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
